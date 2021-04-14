@@ -28,8 +28,8 @@ class _RandomWordsState extends State<RandomWords> {
   _RandomWordsState(this.snappingSheetController,this.notifyParent);
   refresh(dynamic toRemove) {
     setState(() {
-        updateDatabase();
-       _saved.remove(toRemove);
+      updateDatabase();
+      _saved.remove(toRemove);
     });
   }
   logined(dynamic login) async {
@@ -38,16 +38,19 @@ class _RandomWordsState extends State<RandomWords> {
     String userId= FirebaseAuth.instance.currentUser.uid;
     CollectionReference userFav = FirebaseFirestore.instance.collection('users');
     print(userId);
-    List<dynamic> mylist=[];
+    List<dynamic>? mylist=[];
     await userFav.doc(userId)?.get()?.then((documentSnapshot) async =>
-        mylist =documentSnapshot.data()[userId]);
+    mylist =documentSnapshot.data()[userId]);
     print('trueeeeeeeeeeeeee');
     setState(() {
       isLoggedIn=true;
       userEmail = login;
+      if(mylist!=null){
+        _saved.addAll(mylist!.cast<String>());
+        updateDatabase();
+      }
 
-      _saved.addAll(mylist.cast<String>());
-      updateDatabase();
+
 
 
     }
@@ -131,17 +134,17 @@ class _RandomWordsState extends State<RandomWords> {
               if(isLoggedIn)
                 isDragged=true;
             });
-            },
+          },
           onSnapCompleted:(double x,SnappingPosition y){
             setState(() {
-            if(y ==SnappingPosition.factor(positionFactor: openFactor)){
-              factor = openFactor;
-              print('onSheetCompleted');
-              isDragged=true;
-            }else if(y ==SnappingPosition.factor(positionFactor: closeFactor)){
-              factor = closeFactor;
-              isDragged=false;
-            }
+              if(y ==SnappingPosition.factor(positionFactor: openFactor)){
+                factor = openFactor;
+                print('onSheetCompleted');
+                isDragged=true;
+              }else if(y ==SnappingPosition.factor(positionFactor: closeFactor)){
+                factor = closeFactor;
+                isDragged=false;
+              }
             });
           },
           initialSnappingPosition: SnappingPosition.factor(positionFactor: closeFactor),
@@ -156,21 +159,21 @@ class _RandomWordsState extends State<RandomWords> {
               child: Drawer(
                   child:InkWell(
                     child:   ListTile(tileColor:Colors.grey,leading:Text('Welcome back, '+userEmail),
-              trailing: (factor > closeFactor) ? Icon(Icons.arrow_drop_down): Icon(Icons.arrow_drop_up),),
-            onTap: (){
-              setState(() {
-                print('onTap');
+                      trailing: (factor > closeFactor) ? Icon(Icons.arrow_drop_down): Icon(Icons.arrow_drop_up),),
+                    onTap: (){
+                      setState(() {
+                        print('onTap');
 
-                factor = (factor == openFactor ) ? (closeFactor) : (openFactor);
-                notifyParent(factor);
-                if(factor > closeFactor){
-                  isDragged = true;
-                }else if(factor < openFactor){
-                  isDragged = false;
-                }
-              });
-            },
-          ))) ,
+                        factor = (factor == openFactor ) ? (closeFactor) : (openFactor);
+                        notifyParent(factor);
+                        if(factor > closeFactor){
+                          isDragged = true;
+                        }else if(factor < openFactor){
+                          isDragged = false;
+                        }
+                      });
+                    },
+                  ))) ,
           grabbingHeight:!isLoggedIn  ? 0 : 50,
           sheetBelow: !isLoggedIn  ? SnappingSheetContent(child: Container()) : SnappingSheetContent(
             draggable: true,
@@ -179,7 +182,7 @@ class _RandomWordsState extends State<RandomWords> {
     );
   }
   void signOut()async{
-     updateDatabase(); // to synchronize database in case one of the small updates failed.
+    updateDatabase(); // to synchronize database in case one of the small updates failed.
     _signOut();
     setState(() {
       isDragged=false;
