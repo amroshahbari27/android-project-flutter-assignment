@@ -147,7 +147,7 @@ class _RandomWordsState extends State<RandomWords> {
           initialSnappingPosition: SnappingPosition.factor(positionFactor: closeFactor),
           snappingPositions: [SnappingPosition.factor(positionFactor: closeFactor),
             SnappingPosition.factor(positionFactor: openFactor)],
-          lockOverflowDrag:true,
+          lockOverflowDrag:false,
           child:Stack(children: [_buildSuggestions(), !isDragged  ? Container() :
           (isLoggedIn ? BlurryEffect(0.9,2.6,Colors.white):Container())],),
           //initialSnappingPosition:  ,
