@@ -36,9 +36,9 @@ class _Login extends State<Login> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(10),
                     child: Text(
-                      'Welcome to Startup Names Generator, please log in below',
+                      'Welcome to Startup Names Generator, please log in below:',
                       style: TextStyle(
-                          color: Colors.blue,
+                          color: Colors.black,
                           fontWeight: FontWeight.w500,
                           fontSize: 12),
                     )),
@@ -105,9 +105,9 @@ class _Login extends State<Login> {
                           setState(() {
                           attemptLogin= false;
                         });
-                        User currentUser = FirebaseAuth.instance.currentUser;
+                        User? currentUser = FirebaseAuth.instance.currentUser;
                         //if login is successful
-                        if(currentUser.uid != null) {
+                        if(currentUser==null||currentUser.uid != null) {
                           notifyParent(nameController.text);
                           Navigator.of(context).pop();
                         }else{
@@ -169,16 +169,16 @@ class _Login extends State<Login> {
       setState(() {
         attemptLogin= false;
       });
-      User currentUser = FirebaseAuth.instance.currentUser;
+      User? currentUser = FirebaseAuth.instance.currentUser;
 
 
       //if login is successful
-      if(currentUser.uid != null) {
-        await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).set(Map());
+      if(currentUser==null||currentUser.uid != null) {
+        await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).set(Map());
         notifyParent(nameController.text);
         Navigator.of(context).pop();
         Navigator.of(context).pop();
-        print(currentUser.email+ ' << email from sign up');
+        print(currentUser.email!+ ' << email from sign up');
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
