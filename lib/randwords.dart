@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:ui';
 
@@ -35,12 +34,12 @@ class _RandomWordsState extends State<RandomWords> {
   logined(dynamic login) async {
     if(FirebaseAuth.instance.currentUser!=null)
       print('trueeeeeeeeeeeeee');
-    String userId= FirebaseAuth.instance.currentUser.uid;
+    String userId= FirebaseAuth.instance.currentUser!.uid;
     CollectionReference userFav = FirebaseFirestore.instance.collection('users');
     print(userId);
     List<dynamic>? mylist=[];
-    await userFav.doc(userId)?.get()?.then((documentSnapshot) async =>
-    mylist =documentSnapshot.data()[userId]);
+    await userFav.doc(userId).get().then((documentSnapshot) async =>
+    mylist =documentSnapshot.data()![userId]);
     print('trueeeeeeeeeeeeee');
     setState(() {
       isLoggedIn=true;
@@ -202,11 +201,13 @@ class _RandomWordsState extends State<RandomWords> {
   //TODO: create a toJSON
   //here we need to know wether we create base on sign up , or by use .
   Future<void> updateFavoritesDataBase(List<String> tosend) async {
-    String userId= FirebaseAuth.instance.currentUser.uid;
+    if(FirebaseAuth.instance.currentUser==null)
+      return;
+    String userId= FirebaseAuth.instance.currentUser!.uid;
 
     CollectionReference userFav = FirebaseFirestore.instance.collection('users');
     print(userId);
-    userFav.doc(userId)?.update(<String,dynamic>{userId :tosend});
+    userFav.doc(userId).update(<String,dynamic>{userId :tosend});
     //userFav.add(upload.asMap());
     //userFav.doc().add();*/
   }
